@@ -25,7 +25,7 @@ body {
   transition: opacity 0.5s ease-in-out;
 }
 
-/* Overlay styles for project info and comment info */
+/* Overlay styles for project and comment info */
 .overlay {
   position: absolute;
   width: 100%;
@@ -42,4 +42,40 @@ body {
 
 .bottom {
   bottom: 0;
+}
+
+/* Styles for the comment bubble */
+.comment-bubble {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 8px 12px;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.comment-bubble .avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+
+.comment-bubble .comment-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.comment-bubble .username {
+  font-weight: bold;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.comment-bubble .comment-text {
+  font-size: 0.8em;
+  margin: 0;
 }
