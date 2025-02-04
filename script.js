@@ -3,6 +3,7 @@ let currentIndex = 0;
 let slideInterval = null;
 let paused = false;
 let projectsList = [];
+let slideDelay = 2000; // default to 2 seconds (2000ms)
 
 // Fetch multiple random comments for a given projectId and return an array of comment objects.
 async function fetchRandomComments(projectId, count = 10) {
@@ -108,6 +109,19 @@ async function init() {
     document.getElementById("next-btn").addEventListener("click", () => {
       nextSlide();
     });
+    // Attach event listener for slideshow speed slider.
+    document.getElementById("speed-slider").addEventListener("input", (e) => {
+      const newDelay = parseFloat(e.target.value) * 1000; // convert seconds to milliseconds
+      slideDelay = newDelay;
+      if (slideInterval) {
+        clearInterval(slideInterval);
+      }
+      slideInterval = setInterval(() => {
+        if (!paused) {
+          window.nextSlide();
+        }
+      }, slideDelay);
+    });
   } catch (error) {
     console.error("Error fetching projects:", error);
   }
@@ -210,12 +224,12 @@ function startSlideshow(projects) {
   imgElement.src = projectsList[currentIndex].image;
   updateOverlay(projectsList[currentIndex]);
 
-  // Auto slideshow: advance every 2 seconds if not paused.
+  // Auto slideshow: advance every slideDelay milliseconds if not paused.
   slideInterval = setInterval(() => {
     if (!paused) {
       window.nextSlide();
     }
-  }, 2000);
+  }, slideDelay);
 }
 
 // Start initialization once DOM is loaded.

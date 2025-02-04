@@ -119,6 +119,8 @@ body {
   left: 50%;
   transform: translateX(-50%);
   pointer-events: all;
+  display: flex;
+  align-items: center;
 }
 
 #button-controls button {
@@ -135,4 +137,28 @@ body {
 
 #button-controls button:hover {
   background: rgba(255, 255, 255, 0.4);
+}
+
+/* Slider styles for the slideshow speed control */
+#speed-slider {
+  width: 150px;
+  margin-left: 10px;
+  -webkit-appearance: none;
+  background: transparent;
+}
+
+#speed-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  margin-top: -4px;
+}
+
+#speed-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
