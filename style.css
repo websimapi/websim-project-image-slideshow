@@ -40,6 +40,29 @@ body {
   top: 0;
 }
 
+/* Controls positioning inside top overlay */
+#controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#controls button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  font-size: 0.9em;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+#controls button:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
 /* Adjust bottom overlay to occupy a portion of the screen for floating comments */
 .bottom {
   bottom: 0;

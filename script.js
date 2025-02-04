@@ -1,3 +1,9 @@
+// Global variables to manage slideshow state.
+let currentIndex = 0;
+let slideInterval = null;
+let paused = false;
+let projectsList = [];
+
 // Fetch multiple random comments for a given projectId and return an array of comment objects.
 async function fetchRandomComments(projectId, count = 10) {
   try {
@@ -84,23 +90,43 @@ async function init() {
       })
     );
 
+    // Start the slideshow with the fetched projects.
     startSlideshow(projects);
+
+    // Attach event listeners for the control buttons.
+    document.getElementById("pause-btn").addEventListener("click", () => {
+      if (paused) {
+        paused = false;
+        document.getElementById("pause-btn").textContent = "Pause";
+      } else {
+        paused = true;
+        document.getElementById("pause-btn").textContent = "Play";
+      }
+    });
+    document.getElementById("back-btn").addEventListener("click", () => {
+      prevSlide();
+    });
+    document.getElementById("next-btn").addEventListener("click", () => {
+      nextSlide();
+    });
   } catch (error) {
     console.error("Error fetching projects:", error);
   }
 }
 
-// Starts a slideshow cycling through the projects data every 2 seconds.
+// Starts a slideshow cycling through the projects data.
 function startSlideshow(projects) {
-  let currentIndex = 0;
+  projectsList = projects; // Save globally for manual controls.
+  currentIndex = 0;
   const imgElement = document.getElementById("slideshow-img");
   const projectInfoEl = document.getElementById("project-info");
   const commentInfoEl = document.getElementById("comment-info");
 
   // Function to update the displayed project info and floating comments.
   function updateOverlay(project) {
-    // Update the top overlay with project details.
-    projectInfoEl.innerHTML = `<h2>${project.title}</h2>
+    // Update the project details in the details container.
+    const detailsEl = projectInfoEl.querySelector(".details");
+    detailsEl.innerHTML = `<h2>${project.title}</h2>
       <p>${project.description}</p>`;
 
     // Update the floating comments in the bottom container.
@@ -120,8 +146,8 @@ function startSlideshow(projects) {
       bubble.classList.add("comment-bubble", "float");
 
       // Generate random positions within the container.
-      const randomLeft = Math.random() * (containerWidth - 150); // 150 as approximate bubble width.
-      const randomTop = Math.random() * (containerHeight - 50); // 50 as approximate bubble height.
+      const randomLeft = Math.random() * (containerWidth - 150); // Approximate bubble width.
+      const randomTop = Math.random() * (containerHeight - 50); // Approximate bubble height.
       bubble.style.left = `${randomLeft}px`;
       bubble.style.top = `${randomTop}px`;
 
@@ -154,19 +180,40 @@ function startSlideshow(projects) {
     });
   }
 
-  // Initialize with the first project.
-  imgElement.src = projects[currentIndex].image;
-  updateOverlay(projects[currentIndex]);
-
-  setInterval(() => {
-    currentIndex = (currentIndex + 1) % projects.length;
-    // Fade out the image before switching.
+  // Function to update the slide with a fade transition.
+  function updateSlide() {
+    const currentProject = projectsList[currentIndex];
+    const imgFadeDuration = 500; // in milliseconds
+    const imgElement = document.getElementById("slideshow-img");
+    // Fade out the image.
     imgElement.style.opacity = 0;
     setTimeout(() => {
-      imgElement.src = projects[currentIndex].image;
-      updateOverlay(projects[currentIndex]);
+      imgElement.src = currentProject.image;
+      updateOverlay(currentProject);
       imgElement.style.opacity = 1;
-    }, 500); // Half-second fade transition.
+    }, imgFadeDuration);
+  }
+
+  // Expose next and previous slide functions for manual control.
+  window.nextSlide = function () {
+    currentIndex = (currentIndex + 1) % projectsList.length;
+    updateSlide();
+  };
+
+  window.prevSlide = function () {
+    currentIndex = (currentIndex - 1 + projectsList.length) % projectsList.length;
+    updateSlide();
+  };
+
+  // Initialize with the first project.
+  imgElement.src = projectsList[currentIndex].image;
+  updateOverlay(projectsList[currentIndex]);
+
+  // Auto slideshow: change slide every 2 seconds if not paused.
+  slideInterval = setInterval(() => {
+    if (!paused) {
+      window.nextSlide();
+    }
   }, 2000);
 }
 

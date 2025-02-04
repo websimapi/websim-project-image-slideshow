@@ -6,14 +6,21 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>
-      Project Slideshow with Project Info & Floating Message Comments
+      Project Slideshow with Project Info, Floating Comments & Controls
     </title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Top overlay: project details -->
+    <!-- Top overlay: project details and controls -->
     <div id="project-info" class="overlay top">
-      <!-- Project details will be displayed here -->
+      <div class="details">
+        <!-- Project details (title & description) will be displayed here -->
+      </div>
+      <div id="controls">
+        <button id="back-btn">Back</button>
+        <button id="pause-btn">Pause</button>
+        <button id="next-btn">Next</button>
+      </div>
     </div>
     <!-- Fullscreen image element for the slideshow -->
     <img id="slideshow-img" alt="Project Image Slideshow" />
