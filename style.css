@@ -25,7 +25,7 @@ body {
   transition: opacity 0.5s ease-in-out;
 }
 
-/* Overlay styles for project and comment info */
+/* Overlay styles for project info (top) and comment container (bottom) */
 .overlay {
   position: absolute;
   width: 100%;
@@ -40,21 +40,27 @@ body {
   top: 0;
 }
 
+/* Adjust bottom overlay to occupy a portion of the screen for floating comments */
 .bottom {
   bottom: 0;
+  height: 30vh;
+  overflow: hidden;
+  pointer-events: none; /* allow clicks to pass through if needed */
 }
 
-/* Styles for the comment bubble */
+/* Base style for comment bubbles */
 .comment-bubble {
+  position: absolute;
   display: inline-flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   padding: 8px 12px;
   max-width: 90%;
-  margin: 0 auto;
+  pointer-events: all; /* if you want them clickable later */
 }
 
+/* Avatar style inside comment bubble */
 .comment-bubble .avatar {
   width: 32px;
   height: 32px;
@@ -63,6 +69,7 @@ body {
   object-fit: cover;
 }
 
+/* Content style inside comment bubble */
 .comment-bubble .comment-content {
   display: flex;
   flex-direction: column;
@@ -78,4 +85,18 @@ body {
 .comment-bubble .comment-text {
   font-size: 0.8em;
   margin: 0;
+}
+
+/* Floating animation using CSS variables for random translation and duration */
+@keyframes floatAnimation {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(var(--tx), var(--ty));
+  }
+}
+
+.float {
+  animation: floatAnimation var(--duration) ease-in-out infinite alternate;
 }

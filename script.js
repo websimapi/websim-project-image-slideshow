@@ -1,33 +1,51 @@
-// Fetches a random comment for a given projectId and returns an object with text and author data.
-async function fetchRandomComment(projectId) {
+// Fetch multiple random comments for a given projectId and return an array of comment objects.
+async function fetchRandomComments(projectId, count = 10) {
   try {
-    // Fetch up to 100 comments for the project
+    // Fetch up to 100 comments for the project.
     const response = await fetch(
       `/api/v1/projects/${projectId}/comments?first=100&sort_order=desc`
     );
     const data = await response.json();
-    const comments = data.comments?.data || [];
-    if (comments.length === 0) {
-      return { text: "No comments available.", author: null };
+    const commentsData = data.comments?.data || [];
+    if (commentsData.length === 0) {
+      // Return an array with a single placeholder comment.
+      return [
+        {
+          text: "No comments available.",
+          author: null,
+        },
+      ];
     }
-    // Select a random comment from fetched data
-    const randomIndex = Math.floor(Math.random() * comments.length);
-    const selectedComment = comments[randomIndex].comment;
-    // Use raw_content if available; otherwise fallback to a placeholder.
-    return {
-      text: selectedComment.raw_content || "Comment content unavailable.",
-      author: selectedComment.author,
-    };
+    // Shuffle the array to get random order.
+    for (let i = commentsData.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [commentsData[i], commentsData[j]] = [commentsData[j], commentsData[i]];
+    }
+    // Map to the comment object structure.
+    const mappedComments = commentsData.map((item) => {
+      const selectedComment = item.comment;
+      return {
+        text: selectedComment.raw_content || "Comment content unavailable.",
+        author: selectedComment.author,
+      };
+    });
+    // Return up to 'count' comments.
+    return mappedComments.slice(0, count);
   } catch (error) {
     console.error("Error fetching comments for project", projectId, error);
-    return { text: "Error loading comment.", author: null };
+    return [
+      {
+        text: "Error loading comment.",
+        author: null,
+      },
+    ];
   }
 }
 
 // The init function fetches projects for the current creator and starts the slideshow.
 async function init() {
   try {
-    // Get the current user who created this page
+    // Get the current user who created this page.
     const createdBy = await window.websim.getCreatedBy();
     const username = createdBy.username;
 
@@ -45,12 +63,12 @@ async function init() {
       )
       .map((item) => {
         return {
-          // Use project data
+          // Use project data.
           id: item.project.id,
           title: item.project.title || "Untitled Project",
           description: item.project.description || "",
           image: item.project_revision.current_screenshot_url,
-          randomComment: null, // Placeholder for random comment object
+          randomComments: [], // Placeholder for an array of random comment objects.
         };
       });
 
@@ -59,10 +77,10 @@ async function init() {
       return;
     }
 
-    // Pre-fetch a random comment for each project concurrently.
+    // Pre-fetch up to 10 random comments for each project concurrently.
     await Promise.all(
       projects.map(async (project) => {
-        project.randomComment = await fetchRandomComment(project.id);
+        project.randomComments = await fetchRandomComments(project.id, 10);
       })
     );
 
@@ -79,49 +97,76 @@ function startSlideshow(projects) {
   const projectInfoEl = document.getElementById("project-info");
   const commentInfoEl = document.getElementById("comment-info");
 
-  // Function to update the displayed project info and comment bubble
+  // Function to update the displayed project info and floating comments.
   function updateOverlay(project) {
+    // Update the top overlay with project details.
     projectInfoEl.innerHTML = `<h2>${project.title}</h2>
       <p>${project.description}</p>`;
 
-    const comment = project.randomComment;
-    if (comment && comment.author) {
-      // Render the comment with author information and icon in a message bubble.
-      commentInfoEl.innerHTML = `
-        <div class="comment-bubble">
-          <img class="avatar" src="${
-            comment.author.avatar_url || ""
-          }" alt="${comment.author.username}" />
+    // Update the floating comments in the bottom container.
+    updateFloatingComments(project.randomComments);
+  }
+
+  // Function to update the floating comments container with up to 10 comment bubbles.
+  function updateFloatingComments(comments) {
+    // Clear previous comments.
+    commentInfoEl.innerHTML = "";
+    // Get container dimensions.
+    const containerWidth = commentInfoEl.clientWidth;
+    const containerHeight = commentInfoEl.clientHeight;
+
+    comments.forEach((comment) => {
+      const bubble = document.createElement("div");
+      bubble.classList.add("comment-bubble", "float");
+
+      // Generate random positions within the container.
+      const randomLeft = Math.random() * (containerWidth - 150); // 150 as approximate bubble width.
+      const randomTop = Math.random() * (containerHeight - 50); // 50 as approximate bubble height.
+      bubble.style.left = `${randomLeft}px`;
+      bubble.style.top = `${randomTop}px`;
+
+      // Randomize animation properties.
+      const duration = 4 + Math.random() * 6; // Duration between 4 and 10 seconds.
+      bubble.style.setProperty("--duration", `${duration}s`);
+      // Random translation: vary between -30px to +30px horizontally and vertically.
+      const tx = Math.floor(-30 + Math.random() * 60);
+      const ty = Math.floor(-30 + Math.random() * 60);
+      bubble.style.setProperty("--tx", `${tx}px`);
+      bubble.style.setProperty("--ty", `${ty}px`);
+
+      // Build bubble content.
+      if (comment.author) {
+        bubble.innerHTML = `
+          <img class="avatar" src="${comment.author.avatar_url || ""}" alt="${comment.author.username}" />
           <div class="comment-content">
             <span class="username">@${comment.author.username}</span>
             <p class="comment-text">${comment.text}</p>
           </div>
-        </div>
-      `;
-    } else {
-      // If no author info, only display comment text.
-      commentInfoEl.innerHTML = `
-        <div class="comment-bubble">
-          <p class="comment-text">${comment ? comment.text : ""}</p>
-        </div>
-      `;
-    }
+        `;
+      } else {
+        bubble.innerHTML = `
+          <div class="comment-content">
+            <p class="comment-text">${comment.text}</p>
+          </div>
+        `;
+      }
+      commentInfoEl.appendChild(bubble);
+    });
   }
 
-  // Initialize with the first project
+  // Initialize with the first project.
   imgElement.src = projects[currentIndex].image;
   updateOverlay(projects[currentIndex]);
 
   setInterval(() => {
     currentIndex = (currentIndex + 1) % projects.length;
-
     // Fade out the image before switching.
     imgElement.style.opacity = 0;
     setTimeout(() => {
       imgElement.src = projects[currentIndex].image;
       updateOverlay(projects[currentIndex]);
       imgElement.style.opacity = 1;
-    }, 500); // Half-second fade out interval.
+    }, 500); // Half-second fade transition.
   }, 2000);
 }
 
