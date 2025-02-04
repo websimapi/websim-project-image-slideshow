@@ -4,6 +4,7 @@ let slideInterval = null;
 let paused = false;
 let projectsList = [];
 let slideDelay = 2000; // default to 2 seconds (2000ms)
+let zooming = false; // flag for zoom animation
 
 // Fetch multiple random comments for a given projectId and return an array of comment objects.
 async function fetchRandomComments(projectId, count = 10) {
@@ -220,6 +221,25 @@ function startSlideshow(projects) {
     updateSlide();
   };
 
+  // Attach click event on slideshow image for full screen transition.
+  imgElement.addEventListener("click", () => {
+    if (zooming) return;
+    zooming = true;
+    // Add zoom animation class.
+    imgElement.classList.add("zoom-animation");
+  });
+
+  // Listen for the end of the zoom animation.
+  imgElement.addEventListener("transitionend", function onZoomEnd(e) {
+    if (e.propertyName === "transform" && zooming) {
+      const currentProject = projectsList[currentIndex];
+      showFullScreenOverlay(currentProject);
+      // Remove the zoom animation so that when we come back we reset to normal.
+      imgElement.classList.remove("zoom-animation");
+      zooming = false;
+    }
+  });
+
   // Initialize with the first project.
   imgElement.src = projectsList[currentIndex].image;
   updateOverlay(projectsList[currentIndex]);
@@ -230,6 +250,34 @@ function startSlideshow(projects) {
       window.nextSlide();
     }
   }, slideDelay);
+}
+
+// Function to create and show a full screen overlay with an iframe of the project page.
+function showFullScreenOverlay(project) {
+  // Create overlay container.
+  const overlay = document.createElement("div");
+  overlay.id = "fullscreen-overlay";
+  
+  // Create back button.
+  const backButton = document.createElement("button");
+  backButton.className = "fullscreen-back-button";
+  backButton.textContent = "Back";
+  
+  // When back button is clicked, remove overlay.
+  backButton.addEventListener("click", () => {
+    document.body.removeChild(overlay);
+  });
+  
+  // Create iframe element; assuming project page url follows this format.
+  const iframe = document.createElement("iframe");
+  iframe.src = `https://websim.ai/p/${project.id}`;
+  
+  // Append back button and iframe to overlay.
+  overlay.appendChild(backButton);
+  overlay.appendChild(iframe);
+  
+  // Append overlay to body.
+  document.body.appendChild(overlay);
 }
 
 // Start initialization once DOM is loaded.
