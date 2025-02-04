@@ -11,10 +11,10 @@ body {
   height: 100vh;
   overflow: hidden;
   background: #000;
+  font-family: sans-serif;
 }
 
-/* Style the slideshow image to fit inside the viewport,
-   maintaining aspect ratio with letterboxing if necessary */
+/* Fullscreen image styled to fit device viewport */
 #slideshow-img {
   width: 100%;
   height: 100%;
@@ -23,4 +23,23 @@ body {
   display: block;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
+}
+
+/* Overlay styles for project info and comment info */
+.overlay {
+  position: absolute;
+  width: 100%;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.top {
+  top: 0;
+}
+
+.bottom {
+  bottom: 0;
 }
