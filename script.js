@@ -211,6 +211,10 @@ function startSlideshow(projects) {
             <p class="comment-text">${comment.text}</p>
           </div>
         `;
+        // Add click listener on comment bubble to open user profile overlay.
+        bubble.addEventListener("click", () => {
+          showUserProfileOverlay(comment.author);
+        });
       } else {
         bubble.innerHTML = `
           <div class="comment-content">
@@ -292,7 +296,7 @@ function showFullScreenOverlay(project) {
   backButton.className = "fullscreen-back-button";
   backButton.textContent = "Back";
   
-  // When back button is clicked, remove overlay and resume if desired.
+  // When back button is clicked, remove overlay.
   backButton.addEventListener("click", () => {
     document.body.removeChild(overlay);
   });
@@ -300,6 +304,35 @@ function showFullScreenOverlay(project) {
   // Create iframe element; assuming project page url follows this format.
   const iframe = document.createElement("iframe");
   iframe.src = `https://websim.ai/p/${project.id}`;
+  
+  // Append back button and iframe to overlay.
+  overlay.appendChild(backButton);
+  overlay.appendChild(iframe);
+  
+  // Append overlay to body.
+  document.body.appendChild(overlay);
+}
+
+// Function to create and show a full screen overlay for a user's profile page.
+function showUserProfileOverlay(user) {
+  if (!user || !user.username) return;
+  // Create overlay container.
+  const overlay = document.createElement("div");
+  overlay.id = "fullscreen-overlay";
+  
+  // Create back button.
+  const backButton = document.createElement("button");
+  backButton.className = "fullscreen-back-button";
+  backButton.textContent = "Back";
+  
+  // When back button is clicked, remove overlay.
+  backButton.addEventListener("click", () => {
+    document.body.removeChild(overlay);
+  });
+  
+  // Create iframe element for the user's profile page.
+  const iframe = document.createElement("iframe");
+  iframe.src = `https://websim.ai/@${user.username}`;
   
   // Append back button and iframe to overlay.
   overlay.appendChild(backButton);
