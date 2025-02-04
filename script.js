@@ -224,6 +224,9 @@ function startSlideshow(projects) {
   // Attach click event on slideshow image for full screen transition with shake and glow.
   imgElement.addEventListener("click", () => {
     if (zooming) return;
+    // Immediately pause the slideshow when the user clicks.
+    paused = true;
+    document.getElementById("pause-btn").textContent = "Play";
     zooming = true;
     // Add shake and glow animation class.
     imgElement.classList.add("shake-glow-animation");
@@ -232,9 +235,7 @@ function startSlideshow(projects) {
   // Listen for the end of the shake and glow animation.
   imgElement.addEventListener("animationend", function onShakeGlowEnd(e) {
     if (e.animationName === "shakeGlow" && zooming) {
-      // Auto-pause the slideshow when entering full screen.
-      paused = true;
-      document.getElementById("pause-btn").textContent = "Play";
+      // Show full screen overlay after animation.
       showFullScreenOverlay(projectsList[currentIndex]);
       // Remove the animation class so it can be triggered again later.
       imgElement.classList.remove("shake-glow-animation");
