@@ -93,7 +93,7 @@ async function init() {
     // Start the slideshow with the fetched projects.
     startSlideshow(projects);
 
-    // Attach event listeners for the control buttons.
+    // Attach event listeners for the control buttons in the bottom overlay.
     document.getElementById("pause-btn").addEventListener("click", () => {
       if (paused) {
         paused = false;
@@ -136,10 +136,14 @@ function startSlideshow(projects) {
   // Function to update the floating comments container with up to 10 comment bubbles.
   function updateFloatingComments(comments) {
     // Clear previous comments.
+    // Ensure that only floating comments are added; retain button controls.
+    const existingButtons = document.getElementById("button-controls");
     commentInfoEl.innerHTML = "";
-    // Get container dimensions.
+    commentInfoEl.appendChild(existingButtons);
+
+    // Get container dimensions (excluding the controls area if needed).
     const containerWidth = commentInfoEl.clientWidth;
-    const containerHeight = commentInfoEl.clientHeight;
+    const containerHeight = commentInfoEl.clientHeight - existingButtons.offsetHeight;
 
     comments.forEach((comment) => {
       const bubble = document.createElement("div");

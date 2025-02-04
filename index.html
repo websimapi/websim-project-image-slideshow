@@ -11,22 +11,22 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Top overlay: project details and controls -->
+    <!-- Top overlay: project details only -->
     <div id="project-info" class="overlay top">
       <div class="details">
         <!-- Project details (title & description) will be displayed here -->
       </div>
-      <div id="controls">
+    </div>
+    <!-- Fullscreen image element for the slideshow -->
+    <img id="slideshow-img" alt="Project Image Slideshow" />
+    <!-- Bottom overlay: floating comment bubbles container and control buttons -->
+    <div id="comment-info" class="overlay bottom">
+      <!-- Up to 10 floating comment bubbles will be rendered here -->
+      <div id="button-controls">
         <button id="back-btn">Back</button>
         <button id="pause-btn">Pause</button>
         <button id="next-btn">Next</button>
       </div>
-    </div>
-    <!-- Fullscreen image element for the slideshow -->
-    <img id="slideshow-img" alt="Project Image Slideshow" />
-    <!-- Bottom overlay: floating comment bubbles container -->
-    <div id="comment-info" class="overlay bottom">
-      <!-- Up to 10 floating comment bubbles will be rendered here -->
     </div>
     <script type="module" src="script.js"></script>
   <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"4c6229722a6346bc8eb5cb0e5eae5d41","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
