@@ -29,6 +29,7 @@ body {
 #slideshow-container {
   position: relative;
   width: 100%;
+  /* Adjust height for mobile: image fills available space with potential black borders */
   height: calc(100vh - 100px - 35vh);
   background-color: #000;
   display: flex;
@@ -42,14 +43,37 @@ body {
   max-height: 100%;
   object-fit: contain;
   background-color: #000;
-  transition: opacity 0.5s ease-in-out, transform 0.8s ease-out;
+  transition: opacity 0.5s ease-in-out;
   opacity: 1;
   cursor: pointer;
 }
 
-/* Zoom animation class to simulate falling into the center */
-.zoom-animation {
-  transform: scale(20);
+/* New shake and glow animation */
+@keyframes shakeGlow {
+  0% {
+    transform: translate(0, 0);
+    filter: brightness(1);
+  }
+  25% {
+    transform: translate(-5px, 0);
+    filter: brightness(1.5);
+  }
+  50% {
+    transform: translate(5px, 0);
+    filter: brightness(1.5);
+  }
+  75% {
+    transform: translate(-5px, 0);
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: translate(0, 0);
+    filter: brightness(2);
+  }
+}
+
+.shake-glow-animation {
+  animation: shakeGlow 1s ease-out forwards;
 }
 
 /* Bottom comment container with fixed height */

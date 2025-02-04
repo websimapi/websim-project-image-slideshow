@@ -4,7 +4,7 @@ let slideInterval = null;
 let paused = false;
 let projectsList = [];
 let slideDelay = 2000; // default to 2 seconds (2000ms)
-let zooming = false; // flag for zoom animation
+let zooming = false; // flag for animation in progress
 
 // Fetch multiple random comments for a given projectId and return an array of comment objects.
 async function fetchRandomComments(projectId, count = 10) {
@@ -221,21 +221,23 @@ function startSlideshow(projects) {
     updateSlide();
   };
 
-  // Attach click event on slideshow image for full screen transition.
+  // Attach click event on slideshow image for full screen transition with shake and glow.
   imgElement.addEventListener("click", () => {
     if (zooming) return;
     zooming = true;
-    // Add zoom animation class.
-    imgElement.classList.add("zoom-animation");
+    // Add shake and glow animation class.
+    imgElement.classList.add("shake-glow-animation");
   });
 
-  // Listen for the end of the zoom animation.
-  imgElement.addEventListener("transitionend", function onZoomEnd(e) {
-    if (e.propertyName === "transform" && zooming) {
-      const currentProject = projectsList[currentIndex];
-      showFullScreenOverlay(currentProject);
-      // Remove the zoom animation so that when we come back we reset to normal.
-      imgElement.classList.remove("zoom-animation");
+  // Listen for the end of the shake and glow animation.
+  imgElement.addEventListener("animationend", function onShakeGlowEnd(e) {
+    if (e.animationName === "shakeGlow" && zooming) {
+      // Auto-pause the slideshow when entering full screen.
+      paused = true;
+      document.getElementById("pause-btn").textContent = "Play";
+      showFullScreenOverlay(projectsList[currentIndex]);
+      // Remove the animation class so it can be triggered again later.
+      imgElement.classList.remove("shake-glow-animation");
       zooming = false;
     }
   });
@@ -253,6 +255,7 @@ function startSlideshow(projects) {
 }
 
 // Function to create and show a full screen overlay with an iframe of the project page.
+// Also auto pauses the slideshow (already done prior to calling this function).
 function showFullScreenOverlay(project) {
   // Create overlay container.
   const overlay = document.createElement("div");
@@ -263,7 +266,7 @@ function showFullScreenOverlay(project) {
   backButton.className = "fullscreen-back-button";
   backButton.textContent = "Back";
   
-  // When back button is clicked, remove overlay.
+  // When back button is clicked, remove overlay and resume if desired.
   backButton.addEventListener("click", () => {
     document.body.removeChild(overlay);
   });
