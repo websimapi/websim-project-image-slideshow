@@ -69,7 +69,6 @@ async function init() {
       )
       .map((item) => {
         return {
-          // Use project data.
           id: item.project.id,
           title: item.project.title || "Untitled Project",
           description: item.project.description || "",
@@ -93,7 +92,7 @@ async function init() {
     // Start the slideshow with the fetched projects.
     startSlideshow(projects);
 
-    // Attach event listeners for the control buttons in the bottom overlay.
+    // Attach event listeners for control buttons.
     document.getElementById("pause-btn").addEventListener("click", () => {
       if (paused) {
         paused = false;
@@ -124,7 +123,7 @@ function startSlideshow(projects) {
 
   // Function to update the displayed project info and floating comments.
   function updateOverlay(project) {
-    // Update the project details in the details container.
+    // Update the project details in the header.
     const detailsEl = projectInfoEl.querySelector(".details");
     detailsEl.innerHTML = `<h2>${project.title}</h2>
       <p>${project.description}</p>`;
@@ -135,30 +134,29 @@ function startSlideshow(projects) {
 
   // Function to update the floating comments container with up to 10 comment bubbles.
   function updateFloatingComments(comments) {
-    // Clear previous comments.
-    // Ensure that only floating comments are added; retain button controls.
+    // Clear previous comments but keep the button controls.
     const existingButtons = document.getElementById("button-controls");
     commentInfoEl.innerHTML = "";
     commentInfoEl.appendChild(existingButtons);
 
-    // Get container dimensions (excluding the controls area if needed).
+    // Get container dimensions (excluding the controls area).
     const containerWidth = commentInfoEl.clientWidth;
-    const containerHeight = commentInfoEl.clientHeight - existingButtons.offsetHeight;
+    const containerHeight =
+      commentInfoEl.clientHeight - existingButtons.offsetHeight;
 
     comments.forEach((comment) => {
       const bubble = document.createElement("div");
       bubble.classList.add("comment-bubble", "float");
 
       // Generate random positions within the container.
-      const randomLeft = Math.random() * (containerWidth - 150); // Approximate bubble width.
-      const randomTop = Math.random() * (containerHeight - 50); // Approximate bubble height.
+      const randomLeft = Math.random() * (containerWidth - 150);
+      const randomTop = Math.random() * (containerHeight - 50);
       bubble.style.left = `${randomLeft}px`;
       bubble.style.top = `${randomTop}px`;
 
       // Randomize animation properties.
-      const duration = 4 + Math.random() * 6; // Duration between 4 and 10 seconds.
+      const duration = 4 + Math.random() * 6;
       bubble.style.setProperty("--duration", `${duration}s`);
-      // Random translation: vary between -30px to +30px horizontally and vertically.
       const tx = Math.floor(-30 + Math.random() * 60);
       const ty = Math.floor(-30 + Math.random() * 60);
       bubble.style.setProperty("--tx", `${tx}px`);
@@ -187,9 +185,8 @@ function startSlideshow(projects) {
   // Function to update the slide with a fade transition.
   function updateSlide() {
     const currentProject = projectsList[currentIndex];
-    const imgFadeDuration = 500; // in milliseconds
-    const imgElement = document.getElementById("slideshow-img");
-    // Fade out the image.
+    const imgFadeDuration = 500; // milliseconds
+    // Fade out image.
     imgElement.style.opacity = 0;
     setTimeout(() => {
       imgElement.src = currentProject.image;
@@ -213,7 +210,7 @@ function startSlideshow(projects) {
   imgElement.src = projectsList[currentIndex].image;
   updateOverlay(projectsList[currentIndex]);
 
-  // Auto slideshow: change slide every 2 seconds if not paused.
+  // Auto slideshow: advance every 2 seconds if not paused.
   slideInterval = setInterval(() => {
     if (!paused) {
       window.nextSlide();
@@ -221,5 +218,5 @@ function startSlideshow(projects) {
   }, 2000);
 }
 
-// Begin initialization once the DOM is completely loaded.
+// Start initialization once DOM is loaded.
 document.addEventListener("DOMContentLoaded", init);

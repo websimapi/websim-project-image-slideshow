@@ -11,17 +11,19 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <!-- Top overlay: project details only -->
-    <div id="project-info" class="overlay top">
+    <!-- Static header: project title and description -->
+    <div id="project-info">
       <div class="details">
         <!-- Project details (title & description) will be displayed here -->
       </div>
     </div>
-    <!-- Fullscreen image element for the slideshow -->
-    <img id="slideshow-img" alt="Project Image Slideshow" />
+    <!-- Slideshow container: image appears just below the header -->
+    <div id="slideshow-container">
+      <img id="slideshow-img" alt="Project Image Slideshow" />
+    </div>
     <!-- Bottom overlay: floating comment bubbles container and control buttons -->
-    <div id="comment-info" class="overlay bottom">
-      <!-- Up to 10 floating comment bubbles will be rendered here -->
+    <div id="comment-info">
+      <!-- Floating comment bubbles will be rendered here -->
       <div id="button-controls">
         <button id="back-btn">Back</button>
         <button id="pause-btn">Pause</button>
