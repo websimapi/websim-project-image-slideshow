@@ -13,11 +13,13 @@ body {
   background: #000;
 }
 
-/* Style the slideshow image to cover the screen on all devices */
+/* Style the slideshow image to fit inside the viewport,
+   maintaining aspect ratio with letterboxing if necessary */
 #slideshow-img {
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #000;
   display: block;
   opacity: 1;
   transition: opacity 0.5s ease-in-out;
