@@ -123,6 +123,31 @@ async function init() {
         }
       }, slideDelay);
     });
+
+    // Mobile swipe support: Detect swipe left/right on the slideshow container.
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const swipeThreshold = 50; // Minimum px distance for a swipe to be detected.
+    const slideshowContainer = document.getElementById("slideshow-container");
+
+    slideshowContainer.addEventListener("touchstart", (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    slideshowContainer.addEventListener("touchend", (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleGesture();
+    }, false);
+
+    function handleGesture() {
+      if (touchEndX < touchStartX - swipeThreshold) {
+        // Detected swipe left.
+        window.nextSlide();
+      } else if (touchEndX > touchStartX + swipeThreshold) {
+        // Detected swipe right.
+        window.prevSlide();
+      }
+    }
   } catch (error) {
     console.error("Error fetching projects:", error);
   }
